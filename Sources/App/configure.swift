@@ -1,10 +1,26 @@
+import URLRouting
 import Vapor
+import VaporRouting
 
-// configures your application
 public func configure(_ app: Application) async throws {
-    // uncomment to serve files from /Public folder
-    // app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
+  app.mount(SiteRouter(), use: handleRoute(for:_:))
+}
 
-    // register routes
-    try routes(app)
+public enum SiteRoute {
+  case hello
+}
+
+public struct SiteRouter: Parser {
+  public var body: some Parser<URLRequestData, SiteRoute> {
+    Route(.case(SiteRoute.hello)) {
+      Path { "hello" }
+    }
+  }
+}
+
+public func handleRoute(for request: Request, _ route: SiteRoute) -> any AsyncResponseEncodable {
+  switch route {
+  case .hello:
+    return "Oh hi there!"
+  }
 }
